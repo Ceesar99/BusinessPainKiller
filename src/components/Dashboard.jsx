@@ -43,8 +43,8 @@ const ft = iso => !iso ? "" : new Date(iso).toLocaleTimeString("en-GB",{hour:"2-
 
 const doExport = rows => {
   const esc = s => `"${(s||"").replace(/"/g,"''")}"`;
-  const h = ["Date","Business","Industry","Email","Pain Category","Description","Status"];
-  const body = rows.map(r => [fd(r.created_at),esc(r.business_name),esc(r.industry),r.email||"",esc(r.pain_category),esc(r.pain_description),r.status||"Pending"].join(","));
+  const h = ["Date","Business","Industry","Email","Pain Category","Description","Payment Intent","Status"];
+  const body = rows.map(r => [fd(r.created_at),esc(r.business_name),esc(r.industry),r.email||"",esc(r.pain_category),esc(r.pain_description),esc(r.payment_intent),r.status||"Pending"].join(","));
   const blob = new Blob([[h.join(","),...body].join("\n")], {type:"text/csv"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -81,6 +81,23 @@ const ITrophy   = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="no
 const IZap      = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>;
 const IInbox    = () => <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>;
 
+/* ── intent pill helper (used in Modal + business cards) ── */
+const INTENT_CFG = {
+  "Yes, definitely": {emoji:"🟢", color:"#059669", bg:"#ECFDF5", border:"#A7F3D0"},
+  "Yes, maybe":      {emoji:"🔵", color:"#2563EB", bg:"#EFF6FF", border:"#BFDBFE"},
+  "I'm not sure":    {emoji:"🟡", color:"#D97706", bg:"#FFFBEB", border:"#FCD34D"},
+  "No":              {emoji:"🔴", color:"#C8102E", bg:"rgba(200,16,46,0.07)", border:"rgba(200,16,46,0.2)"},
+};
+function IntentPill({ value }) {
+  const cfg = INTENT_CFG[value];
+  if (!cfg) return <span style={{color:K.gray2,fontSize:11}}>—</span>;
+  return (
+    <span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"3px 9px",borderRadius:20,fontSize:11,fontWeight:700,color:cfg.color,background:cfg.bg,border:`1px solid ${cfg.border}`,whiteSpace:"nowrap"}}>
+      {cfg.emoji} {value}
+    </span>
+  );
+}
+
 /* ── Detail Modal ── */
 function Modal({ row, onClose, onStatus }) {
   if (!row) return null;
@@ -91,28 +108,35 @@ function Modal({ row, onClose, onStatus }) {
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
       style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center",padding:20,backdropFilter:"blur(3px)"}}
     >
-      <div style={{background:"#fff",border:`1px solid ${K.border}`,borderRadius:16,padding:28,width:"100%",maxWidth:520,position:"relative",boxShadow:"0 20px 60px rgba(0,0,0,0.12)"}}>
+      <div style={{background:"#fff",border:`1px solid ${K.border}`,borderRadius:16,padding:28,width:"100%",maxWidth:560,position:"relative",boxShadow:"0 20px 60px rgba(0,0,0,0.12)",maxHeight:"90vh",overflowY:"auto"}}>
         <button onClick={onClose} style={{position:"absolute",top:14,right:14,background:"#F3F4F6",border:`1px solid ${K.border}`,borderRadius:6,color:K.gray,padding:"4px 8px",cursor:"pointer",fontWeight:700,fontSize:12}}><IX/></button>
         <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,letterSpacing:1,color:K.text,marginBottom:18}}>Submission Detail</div>
-        {[["Business",row.business_name],["Industry",row.industry],["Email",row.email],["Pain Category",row.pain_category]].map(([l,v])=>(
-          <div key={l} style={{marginBottom:12}}>
-            <div style={{fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:K.gray2,marginBottom:3}}>{l}</div>
-            <div style={{fontSize:14,color:K.text,fontWeight:500}}>{v||"—"}</div>
+
+        {/* two-column grid for compact fields */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:12}}>
+          {[["Business Name",row.business_name],["Industry",row.industry],["Business Email",row.email],["Pain Category",row.pain_category],["Submitted",`${fd(row.created_at)} at ${ft(row.created_at)}`]].map(([l,v])=>(
+            <div key={l} style={{background:"#F9FAFB",border:`1px solid ${K.border}`,borderRadius:8,padding:"10px 12px"}}>
+              <div style={{fontSize:9,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:K.gray2,marginBottom:4}}>{l}</div>
+              <div style={{fontSize:13,color:K.text,fontWeight:600,wordBreak:"break-all"}}>{v||"—"}</div>
+            </div>
+          ))}
+          <div style={{background:"#F9FAFB",border:`1px solid ${K.border}`,borderRadius:8,padding:"10px 12px"}}>
+            <div style={{fontSize:9,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:K.gray2,marginBottom:6}}>Payment Intent</div>
+            <IntentPill value={row.payment_intent}/>
           </div>
-        ))}
-        <div style={{marginBottom:12}}>
-          <div style={{fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:K.gray2,marginBottom:3}}>Description</div>
-          <div style={{fontSize:13,color:K.text2,lineHeight:1.65,background:"#F9FAFB",border:`1px solid ${K.border}`,borderRadius:8,padding:12}}>{row.pain_description||"No description."}</div>
         </div>
+
         <div style={{marginBottom:12}}>
-          <div style={{fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:K.gray2,marginBottom:3}}>Submitted</div>
-          <div style={{fontSize:14,color:K.text,fontWeight:500}}>{fd(row.created_at)} at {ft(row.created_at)}</div>
+          <div style={{fontSize:9,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:K.gray2,marginBottom:6}}>Pain Description</div>
+          <div style={{fontSize:13,color:K.text2,lineHeight:1.7,background:"#F9FAFB",border:`1px solid ${K.border}`,borderRadius:8,padding:12}}>{row.pain_description||"No description provided."}</div>
         </div>
-        <div style={{marginBottom:4}}>
-          <div style={{fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:K.gray2,marginBottom:6}}>Status</div>
+
+        <div style={{marginBottom:16}}>
+          <div style={{fontSize:9,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:K.gray2,marginBottom:6}}>Status</div>
           <span style={{display:"inline-flex",padding:"4px 12px",borderRadius:20,fontSize:11,fontWeight:700,color:sty.color,background:sty.bg,border:`1px solid ${sty.border}`}}>{st}</span>
         </div>
-        <div style={{display:"flex",gap:8,marginTop:18}}>
+
+        <div style={{display:"flex",gap:8}}>
           {[["Pending","Set Pending"],["Validated","✓ Validate"],["Rejected","✕ Reject"]].map(([v,label])=>{
             const s = stStyle(v);
             return (
@@ -139,15 +163,21 @@ export default function Dashboard() {
   const [fPain,     setFPain]     = useState("all");
   const [selected,  setSelected]  = useState(null);
   const [refreshed, setRefreshed] = useState(null);
+  const [expandedIntent, setExpandedIntent] = useState(null);
 
-  /* ── sidebar auto-close after 10 s ── */
+  /* ── sidebar auto-close after 3 s ── */
   const [sbOpen, setSbOpen] = useState(true);
   const timer = useRef(null);
 
   const resetTimer = () => {
     setSbOpen(true);
     clearTimeout(timer.current);
-    timer.current = setTimeout(() => setSbOpen(false), 1000);
+    timer.current = setTimeout(() => setSbOpen(false), 3000);
+  };
+
+  const closeNow = () => {
+    clearTimeout(timer.current);
+    setSbOpen(false);
   };
 
   useEffect(() => {
@@ -209,6 +239,19 @@ export default function Dashboard() {
 
   const topInd  = indData[0];
   const topPain = painData[0];
+
+  /* payment intent breakdown */
+  const INTENT_OPTIONS = [
+    {key:"Yes, definitely", emoji:"🟢", color:"#059669"},
+    {key:"Yes, maybe",      emoji:"🔵", color:"#2563EB"},
+    {key:"I'm not sure",    emoji:"🟡", color:"#D97706"},
+    {key:"No",              emoji:"🔴", color:K.red},
+  ];
+  const intentCounts = Object.fromEntries(INTENT_OPTIONS.map(o=>[o.key,0]));
+  rows.forEach(r => { if(r.payment_intent && intentCounts[r.payment_intent] !== undefined) intentCounts[r.payment_intent]++; });
+  const intentTotal   = INTENT_OPTIONS.reduce((s,o)=>s+intentCounts[o.key],0);
+  const intentMaxVal  = Math.max(...INTENT_OPTIONS.map(o=>intentCounts[o.key]),1);
+  const positiveCount = intentCounts["Yes, definitely"] + intentCounts["Yes, maybe"];
 
   /* filtered table rows */
   const filtered = rows.filter(r => {
@@ -292,7 +335,7 @@ export default function Dashboard() {
             return (
               <div
                 key={id}
-                onClick={() => { setTab(id); resetTimer(); }}
+                onClick={() => { setTab(id); closeNow(); }}
                 style={{display:"flex",alignItems:"center",gap:9,padding:"9px 10px",borderRadius:8,fontSize:13,fontWeight:active?700:600,color:active?K.red:K.gray,cursor:"pointer",marginBottom:1,border:active?`1px solid rgba(200,16,46,0.22)`:"1px solid transparent",background:active?"rgba(200,16,46,0.08)":"transparent",transition:"all 0.15s",userSelect:"none",whiteSpace:"nowrap"}}
               >
                 <Icon/>
@@ -434,6 +477,106 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
+
+              {/* ── Payment Intent Breakdown ── */}
+              <div style={{...card,padding:20,marginBottom:20}}>
+                <div style={{fontSize:13,fontWeight:800,color:K.text,marginBottom:3,display:"flex",alignItems:"center",gap:7}}>
+                  <IChart/> Payment Intent Breakdown
+                </div>
+                <div style={{fontSize:11,color:K.gray,marginBottom:14,fontWeight:500}}>
+                  Would respondents pay if we built this? · {intentTotal} answered · Click any row to see the businesses
+                </div>
+
+                {intentTotal > 0 && (
+                  <div style={{marginBottom:16,padding:"11px 14px",background:"rgba(5,150,105,0.06)",border:"1px solid rgba(5,150,105,0.2)",borderRadius:10,fontSize:13,color:K.text,fontWeight:600}}>
+                    🎯 <strong style={{color:"#059669"}}>{positiveCount} of {intentTotal}</strong> respondents said Yes —{" "}
+                    <strong style={{color:"#059669"}}>{Math.round((positiveCount/intentTotal)*100)}% positive signal</strong>
+                  </div>
+                )}
+
+                {INTENT_OPTIONS.map(({key,emoji,color}) => {
+                  const count   = intentCounts[key];
+                  const pct     = intentTotal > 0 ? Math.round((count/intentTotal)*100) : 0;
+                  const open    = expandedIntent === key;
+                  const bizList = rows.filter(r => r.payment_intent === key);
+                  const cfg     = INTENT_CFG[key];
+                  return (
+                    <div key={key} style={{marginBottom:8,borderRadius:10,border:`1px solid ${open ? cfg.border : K.border}`,overflow:"hidden",transition:"border-color 0.2s"}}>
+                      {/* clickable bar row */}
+                      <div
+                        onClick={() => setExpandedIntent(open ? null : key)}
+                        style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",cursor:"pointer",background:open ? cfg.bg : "#fff",transition:"background 0.2s",userSelect:"none"}}
+                      >
+                        <div style={{fontSize:15,width:20,flexShrink:0}}>{emoji}</div>
+                        <div style={{fontSize:12,color:K.text2,width:120,flexShrink:0,fontWeight:700}}>{key}</div>
+                        <div style={{flex:1,background:"#F3F4F6",borderRadius:100,height:9,border:`1px solid ${K.border}`}}>
+                          <div style={{height:"100%",borderRadius:100,background:color,width:count===0?"2px":`${Math.max((count/intentMaxVal)*100,2)}%`,opacity:count===0?0.15:1,transition:"width 0.6s ease"}}/>
+                        </div>
+                        <div style={{fontSize:12,fontWeight:800,color:K.text,width:20,textAlign:"right"}}>{count}</div>
+                        <div style={{fontSize:11,color:K.gray2,width:32,textAlign:"right"}}>{pct}%</div>
+                        <div style={{fontSize:11,color:cfg.color,fontWeight:700,marginLeft:4,transition:"transform 0.2s",transform:open?"rotate(180deg)":"rotate(0deg)"}}>▾</div>
+                      </div>
+
+                      {/* expanded business list */}
+                      {open && (
+                        <div style={{borderTop:`1px solid ${cfg.border}`,background:"#FAFAFA"}}>
+                          {/* export this group button */}
+                          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px",borderBottom:`1px solid ${K.border}`}}>
+                            <span style={{fontSize:11,fontWeight:700,color:K.gray}}>{count} {count===1?"business":"businesses"} selected <strong style={{color:cfg.color}}>{key}</strong></span>
+                            <button
+                              onClick={e=>{e.stopPropagation();doExport(bizList);}}
+                              style={{display:"flex",alignItems:"center",gap:5,padding:"5px 12px",borderRadius:6,fontSize:11,fontWeight:700,cursor:"pointer",border:`1px solid ${cfg.border}`,background:cfg.bg,color:cfg.color}}
+                            >
+                              <IDL/> Export this group CSV
+                            </button>
+                          </div>
+
+                          {bizList.length === 0 ? (
+                            <div style={{padding:"16px 14px",fontSize:12,color:K.gray2}}>No businesses in this group yet.</div>
+                          ) : (
+                            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:10,padding:12}}>
+                              {bizList.map(r => (
+                                <div
+                                  key={r.id}
+                                  onClick={e=>{e.stopPropagation();setSelected(r);}}
+                                  style={{background:"#fff",border:`1px solid ${K.border}`,borderRadius:10,padding:"14px 16px",cursor:"pointer",transition:"all 0.15s",boxShadow:"0 1px 3px rgba(0,0,0,0.04)"}}
+                                  onMouseEnter={e=>e.currentTarget.style.borderColor=cfg.color}
+                                  onMouseLeave={e=>e.currentTarget.style.borderColor=K.border}
+                                >
+                                  <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:8,gap:8}}>
+                                    <div style={{fontWeight:800,fontSize:13,color:K.text,lineHeight:1.3}}>{r.business_name||"—"}</div>
+                                    <span style={{display:"inline-flex",background:"#F3F4F6",border:`1px solid ${K.border}`,borderRadius:5,padding:"2px 7px",fontSize:10,color:K.text2,fontWeight:600,whiteSpace:"nowrap",flexShrink:0}}>
+                                      {r.industry||"—"}
+                                    </span>
+                                  </div>
+                                  <div style={{fontSize:11,color:K.gray,marginBottom:5,display:"flex",alignItems:"center",gap:5}}>
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                    {r.email||"—"}
+                                  </div>
+                                  <div style={{fontSize:11,color:K.text2,fontWeight:600,marginBottom:6}}>{r.pain_category||"—"}</div>
+                                  {r.pain_description && (
+                                    <div style={{fontSize:11,color:K.gray,lineHeight:1.5,borderTop:`1px solid ${K.border}`,paddingTop:6,marginTop:6}}>
+                                      {r.pain_description.slice(0,100)}{r.pain_description.length>100?"…":""}
+                                    </div>
+                                  )}
+                                  <div style={{marginTop:8,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                                    <span style={{fontSize:10,color:K.gray2}}>{fd(r.created_at)}</span>
+                                    <span style={{fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:20,...stStyle(r.status||"Pending")}}>{r.status||"Pending"}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {intentTotal === 0 && (
+                  <div style={{fontSize:12,color:K.gray2,padding:"12px 0"}}>No payment intent data yet. Submissions from the landing page will populate this chart.</div>
+                )}
+              </div>
             </>
           )}
 
@@ -493,7 +636,7 @@ export default function Dashboard() {
                     <table style={{width:"100%",borderCollapse:"collapse",minWidth:900}}>
                       <thead>
                         <tr style={{background:"#F9FAFB",borderBottom:`1px solid ${K.border}`}}>
-                          {["Date","Business","Industry","Email","Pain Category","Description","Status",""].map(h=>(
+                          {["Date","Business","Industry","Email","Pain Category","Description","Payment Intent","Status",""].map(h=>(
                             <th key={h} style={{padding:"10px 14px",textAlign:"left",fontSize:10,fontWeight:800,letterSpacing:1.2,textTransform:"uppercase",color:K.gray,whiteSpace:"nowrap"}}>{h}</th>
                           ))}
                         </tr>
@@ -518,6 +661,9 @@ export default function Dashboard() {
                               <td style={{padding:"12px 14px",fontSize:11,color:K.text2,fontWeight:500}}>{r.pain_category||"—"}</td>
                               <td style={{padding:"12px 14px",fontSize:11,color:K.gray,lineHeight:1.5,maxWidth:180}}>
                                 {(r.pain_description||"—").slice(0,80)}{(r.pain_description||"").length>80?"…":""}
+                              </td>
+                              <td style={{padding:"12px 14px"}}>
+                                <IntentPill value={r.payment_intent}/>
                               </td>
                               <td style={{padding:"12px 14px"}}>
                                 <span style={{display:"inline-flex",alignItems:"center",padding:"4px 10px",borderRadius:20,fontSize:11,fontWeight:700,color:sty.color,background:sty.bg,border:`1px solid ${sty.border}`}}>
