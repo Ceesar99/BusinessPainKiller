@@ -9,12 +9,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 async function saveToSupabase(data) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist_submissions`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": SUPABASE_KEY,
-      "Authorization": `Bearer ${SUPABASE_KEY}`,
-      "Prefer": "return=minimal"
-    },
+    headers: { "Content-Type": "application/json", "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Prefer": "return=minimal" },
     body: JSON.stringify(data)
   });
   if (!res.ok) throw new Error("Supabase error: " + res.status);
@@ -30,11 +25,17 @@ const STYLES = `
   --bebas: "Bebas Neue", sans-serif; --manrope: "Manrope", sans-serif;
 }
 html { scroll-behavior: smooth; }
-body { background: var(--white); color: var(--black); font-family: var(--manrope); overflow-x: hidden; }
-#bpk-root { position: relative; z-index: 1; }
+body { background: var(--white); color: var(--black); font-family: var(--manrope); overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+
+/* FIX: canvas behind everything, page content always on top */
 #three-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-.nav { position: sticky; top: 0; z-index: 200; background: #0A0A0A; border-bottom: 1px solid rgba(200,16,46,0.25); padding: 0 48px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
-.logo-wrap { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+/* FIX: NO isolation:isolate — that breaks z-index stacking in Chrome/Safari */
+/* Instead give every section explicit z-index:1 and position:relative */
+#bpk-root { position: relative; z-index: 1; }
+
+.nav { position: sticky; top: 0; z-index: 200; background: #0A0A0A; border-bottom: 1px solid rgba(200,16,46,0.25); padding: 0 48px; height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logo-wrap { display: flex; align-items: center; gap: 12px; flex-shrink: 0; min-width: 0; }
 .logo-img { height: 46px; width: auto; object-fit: contain; display: block; flex-shrink: 0; }
 .logo-text { font-family: var(--manrope); font-weight: 900; font-size: 17px; color: #fff; letter-spacing: -0.3px; line-height: 1.2; white-space: nowrap; }
 .logo-text span { color: var(--red); }
@@ -42,8 +43,10 @@ body { background: var(--white); color: var(--black); font-family: var(--manrope
 .nav-links { display: flex; gap: 26px; list-style: none; flex-shrink: 0; }
 .nav-links a { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
 .nav-links a:hover { color: var(--red); }
-.nav-cta { background: var(--red); color: #fff; border: none; padding: 9px 18px; border-radius: 7px; font-family: var(--manrope); font-weight: 800; font-size: 12px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 6px; }
+.nav-cta { background: var(--red); color: #fff; border: none; padding: 7px 13px; border-radius: 7px; font-family: var(--manrope); font-weight: 800; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 5px; }
 .nav-cta:hover { background: var(--red-dark); }
+
+/* FIX: hero must be visible immediately — explicit z-index, no transform tricks */
 .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 80px 60px; max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
 .hero-left { padding-right: 40px; }
 .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 100px; background: rgba(200,16,46,0.08); border: 1px solid rgba(200,16,46,0.2); font-size: 11px; font-weight: 800; color: var(--red); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 32px; }
@@ -197,14 +200,15 @@ body { background: var(--white); color: var(--black); font-family: var(--manrope
 .success-email-note { background:rgba(200,16,46,0.06);border:1px solid rgba(200,16,46,0.2);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--black);line-height:1.6;display:flex;align-items:flex-start;gap:8px;text-align:left; }
 .success-email-note strong { color:var(--red); }
 .error-msg { background:rgba(200,16,46,0.08);border:1px solid rgba(200,16,46,0.25);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red);font-weight:600;margin-top:8px; }
-.footer { background:var(--black);padding:36px 60px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;border-top:1px solid rgba(200,16,46,0.2); }
-.footer-copy { font-size:13px;color:rgba(255,255,255,0.35); }
+.footer { background:var(--black);padding:28px 60px;position:relative;z-index:1;border-top:1px solid rgba(200,16,46,0.2); }
+.footer-bottom { display:flex;align-items:center;justify-content:space-between; }
+.footer-copy { font-size:12px;color:rgba(255,255,255,0.35); }
 .footer-copy span { color:var(--red); }
-.footer-links { display:flex;gap:24px; }
+.footer-links { display:flex;gap:22px; }
 .footer-links a { font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s; }
 .footer-links a:hover { color:#fff; }
 @media (max-width:900px) {
-  .nav { padding:0 18px; } .nav-links { display:none; }
+  .nav { padding:0 16px; gap:8px; } .nav-links { display:none; }
   .hero { grid-template-columns:1fr;padding:56px 20px 36px;min-height:auto;gap:44px; }
   .hero-right { height:400px; } .float-badge { display:none; }
   .section { padding:56px 20px; } .steps-row { grid-template-columns:1fr; }
@@ -212,130 +216,117 @@ body { background: var(--white); color: var(--black); font-family: var(--manrope
   .pricing-inner { grid-template-columns:1fr;padding:56px 20px;gap:44px; }
   .testi-grid { grid-template-columns:1fr; }
   .waitlist-inner { grid-template-columns:1fr;padding:56px 20px;gap:36px; }
-  .footer { flex-direction:column;gap:14px;padding:28px 20px;text-align:center; }
+  .footer { padding:20px; }
+  .footer-bottom { flex-direction:column;gap:10px;text-align:center; }
   .card-stack { width:290px; }
 }
 `;
 
 const Icon = {
-  rocket: () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.5-1 5.5-1 5.5s4-0.5 5.5-2L4.5 16.5z"/><path d="M12 2C6 2 2 8 2 12l10 10c4 0 10-4 10-10C22 8 18 2 12 2z"/><circle cx="12" cy="12" r="3"/></svg>,
-  check: () => <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2,6 5,9 10,3"/></svg>,
-  arrow: () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>,
+  rocket:   () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.5-1 5.5-1 5.5s4-0.5 5.5-2L4.5 16.5z"/><path d="M12 2C6 2 2 8 2 12l10 10c4 0 10-4 10-10C22 8 18 2 12 2z"/><circle cx="12" cy="12" r="3"/></svg>,
+  check:    () => <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2,6 5,9 10,3"/></svg>,
+  arrow:    () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>,
   calendar: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
-  invoice: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
-  box: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>,
-  chat: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+  invoice:  () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+  box:      () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>,
+  chat:     () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
   trending: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C8102E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>,
-  users: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
-  lock: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
-  bolt: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/></svg>,
-  target: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
-  mail: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
-  gear: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
-  search: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
-  build: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16,18 22,12 16,6"/><polyline points="8,6 2,12 8,18"/></svg>,
-  tag: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>,
-  award: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21,13.89 7,23 12,20 17,23 15.79,13.88"/></svg>,
-  mic: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>,
+  users:    () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+  lock:     () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+  bolt:     () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/></svg>,
+  target:   () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+  mail:     () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
+  gear:     () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+  search:   () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+  build:    () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16,18 22,12 16,6"/><polyline points="8,6 2,12 8,18"/></svg>,
+  tag:      () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>,
+  award:    () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21,13.89 7,23 12,20 17,23 15.79,13.88"/></svg>,
+  mic:      () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>,
 };
 
-/* ── THREE.JS BACKGROUND (from BPK Pro) ── */
 function ThreeBackground() {
   const canvasRef = useRef(null);
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0xffffff, 0);
-    const scene = new THREE.Scene();
+    const scene  = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 18;
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-    const dirLight = new THREE.DirectionalLight(0xC8102E, 1.2);
-    dirLight.position.set(5, 10, 5);
-    scene.add(dirLight);
-    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.8);
-    dirLight2.position.set(-5, -5, 5);
-    scene.add(dirLight2);
-
-    const redMat = new THREE.MeshPhongMaterial({ color: 0xC8102E, shininess: 120, transparent: true, opacity: 0.18 });
-    const whiteMat = new THREE.MeshPhongMaterial({ color: 0x222222, shininess: 80, transparent: true, opacity: 0.07 });
-    const wireMat = new THREE.MeshBasicMaterial({ color: 0xC8102E, wireframe: true, transparent: true, opacity: 0.06 });
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl1 = new THREE.DirectionalLight(0xC8102E, 1.2); dl1.position.set(5, 10, 5);  scene.add(dl1);
+    const dl2 = new THREE.DirectionalLight(0xffffff, 0.8); dl2.position.set(-5, -5, 5); scene.add(dl2);
+    const mat = {
+      red:   new THREE.MeshPhongMaterial({ color:0xC8102E, shininess:120, transparent:true, opacity:0.16 }),
+      dark:  new THREE.MeshPhongMaterial({ color:0x222222, shininess:80,  transparent:true, opacity:0.07 }),
+      wire:  new THREE.MeshBasicMaterial({ color:0xC8102E, wireframe:true, transparent:true, opacity:0.055 }),
+      wire2: new THREE.MeshBasicMaterial({ color:0x333333, wireframe:true, transparent:true, opacity:0.045 }),
+      red2:  new THREE.MeshPhongMaterial({ color:0xC8102E, shininess:80,  transparent:true, opacity:0.11 }),
+    };
     const meshes = [];
-
-    const torusGeo = new THREE.TorusGeometry(6, 0.35, 20, 80);
-    const torus = new THREE.Mesh(torusGeo, redMat);
-    torus.position.set(8, 0, -4); torus.rotation.x = Math.PI / 4;
-    scene.add(torus); meshes.push({ mesh: torus, rx: 0.003, ry: 0.005, rz: 0.001 });
-
-    const torus2Geo = new THREE.TorusGeometry(5, 0.2, 16, 60);
-    const torus2 = new THREE.Mesh(torus2Geo, wireMat);
-    torus2.position.set(-8, 2, -6); torus2.rotation.x = -Math.PI / 6;
-    scene.add(torus2); meshes.push({ mesh: torus2, rx: -0.004, ry: 0.003, rz: 0.002 });
-
-    const icoGeo = new THREE.IcosahedronGeometry(2.5, 1);
-    const ico = new THREE.Mesh(icoGeo, redMat);
-    ico.position.set(-7, -4, -3);
-    scene.add(ico); meshes.push({ mesh: ico, rx: 0.005, ry: 0.007, rz: 0.003 });
-
-    const icoWireGeo = new THREE.IcosahedronGeometry(2.7, 1);
-    const icoWire = new THREE.Mesh(icoWireGeo, wireMat);
-    icoWire.position.set(-7, -4, -3);
-    scene.add(icoWire); meshes.push({ mesh: icoWire, rx: 0.005, ry: 0.007, rz: 0.003 });
-
-    const octGeo = new THREE.OctahedronGeometry(1.8);
-    const oct = new THREE.Mesh(octGeo, whiteMat);
-    oct.position.set(5, 5, -2);
-    scene.add(oct); meshes.push({ mesh: oct, rx: 0.007, ry: -0.005, rz: 0.004 });
-
-    for (let i = 0; i < 12; i++) {
-      const sGeo = new THREE.SphereGeometry(0.12 + Math.random() * 0.25, 12, 12);
-      const sMat = new THREE.MeshPhongMaterial({ color: i % 3 === 0 ? 0xC8102E : 0x333333, transparent: true, opacity: 0.12 + Math.random() * 0.1, shininess: 100 });
-      const s = new THREE.Mesh(sGeo, sMat);
-      s.position.set((Math.random() - 0.5) * 28, (Math.random() - 0.5) * 20, (Math.random() - 0.5) * 10 - 4);
-      scene.add(s);
-      meshes.push({ mesh: s, rx: Math.random() * 0.01 - 0.005, ry: Math.random() * 0.01 - 0.005, rz: 0, float: true, baseY: s.position.y, floatSpeed: Math.random() * 0.5 + 0.3, floatAmp: Math.random() * 0.3 + 0.1 });
+    const add = (geo, m, px, py, pz, rx=0, ry=0, rz=0, spin={}) => {
+      const mesh = new THREE.Mesh(geo, m);
+      mesh.position.set(px, py, pz); mesh.rotation.set(rx, ry, rz);
+      scene.add(mesh); meshes.push({ mesh, ...spin }); return mesh;
+    };
+    add(new THREE.TorusGeometry(6,0.35,20,80),    mat.red,   8,  0, -4, Math.PI/4,0,0,    {rx:0.003,ry:0.005,rz:0.001});
+    add(new THREE.TorusGeometry(5,0.2,16,60),     mat.wire, -8,  2, -6,-Math.PI/6,0,0,    {rx:-0.004,ry:0.003,rz:0.002});
+    add(new THREE.IcosahedronGeometry(2.5,1),     mat.red,  -7, -4, -3, 0,0,0,             {rx:0.005,ry:0.007,rz:0.003});
+    add(new THREE.IcosahedronGeometry(2.7,1),     mat.wire, -7, -4, -3, 0,0,0,             {rx:0.005,ry:0.007,rz:0.003});
+    add(new THREE.OctahedronGeometry(1.8),        mat.dark,  5,  5, -2, 0,0,0,             {rx:0.007,ry:-0.005,rz:0.004});
+    add(new THREE.TorusGeometry(3.5,0.08,8,60),  new THREE.MeshBasicMaterial({color:0xC8102E,transparent:true,opacity:0.07}), 0,-6,-5, Math.PI/3,0,0, {rx:0.002,ry:0.006,rz:0});
+    add(new THREE.TorusGeometry(4.5,0.22,14,60), mat.wire, -13, 8,-9, 0,Math.PI/3,0,      {rx:0.002,ry:-0.004,rz:0.001});
+    add(new THREE.IcosahedronGeometry(1.6,0),    mat.red2, -12, 7,-5, 0,0,0,               {rx:-0.006,ry:0.005,rz:0.002});
+    add(new THREE.IcosahedronGeometry(2.0,1),    mat.red2,  13, 7,-6, 0,0,0,               {rx:0.005,ry:-0.006,rz:0.002});
+    add(new THREE.IcosahedronGeometry(2.2,1),    mat.wire,  13, 7,-6, 0,0,0,               {rx:0.005,ry:-0.006,rz:0.002});
+    add(new THREE.TorusGeometry(2.8,0.14,12,50), mat.wire,  10,10,-8, Math.PI/5,0,0,       {rx:0.003,ry:0.004,rz:0.001});
+    add(new THREE.OctahedronGeometry(2.3),       mat.dark,  12,-7,-5, 0,0,0,               {rx:0.004,ry:0.006,rz:-0.003});
+    add(new THREE.TorusGeometry(3.2,0.18,12,55), mat.red2,  14,-2,-8, 0,0,Math.PI/6,      {rx:0.002,ry:0.006,rz:0.002});
+    add(new THREE.IcosahedronGeometry(1.5,0),    mat.red2, -12,-6,-4, 0,0,0,               {rx:0.007,ry:-0.005,rz:0.003});
+    add(new THREE.TorusGeometry(3.8,0.16,12,50), mat.wire, -10,-8,-7, Math.PI/4,0,0,       {rx:-0.003,ry:0.004,rz:0.002});
+    add(new THREE.TorusGeometry(3.0,0.14,12,50), mat.wire,   0,-9,-6, Math.PI/5,0,0,       {rx:0.003,ry:0.005,rz:0});
+    add(new THREE.OctahedronGeometry(1.4),       mat.red2,   3,-8,-3, 0,0,0,               {rx:0.006,ry:-0.004,rz:0.002});
+    add(new THREE.IcosahedronGeometry(1.3,0),    mat.dark,  -1, 9,-4, 0,0,0,               {rx:-0.005,ry:0.006,rz:0.002});
+    add(new THREE.TorusGeometry(2.2,0.12,10,45), mat.wire,   2, 9,-7, Math.PI/3,0,0,       {rx:0.004,ry:-0.003,rz:0.001});
+    add(new THREE.TorusGeometry(2.5,0.13,10,45), mat.wire2,-16, 0,-10,0,Math.PI/4,0,       {rx:0.001,ry:0.003,rz:0.001});
+    add(new THREE.TorusGeometry(2.5,0.13,10,45), mat.wire2, 16, 0,-10,0,Math.PI/4,0,       {rx:0.001,ry:-0.003,rz:0.001});
+    add(new THREE.IcosahedronGeometry(10,1),     mat.wire2,  0, 0,-14,0,0,0,               {rx:0.001,ry:0.002,rz:0});
+    for (let i = 0; i < 26; i++) {
+      const r=0.09+Math.random()*0.27, px=(Math.random()-0.5)*38, py=(Math.random()-0.5)*28, pz=(Math.random()-0.5)*12-4;
+      const sm = new THREE.MeshPhongMaterial({ color:i%3===0?0xC8102E:0x333333, transparent:true, opacity:0.09+Math.random()*0.11, shininess:100 });
+      const s = new THREE.Mesh(new THREE.SphereGeometry(r,10,10), sm);
+      s.position.set(px,py,pz); scene.add(s);
+      meshes.push({ mesh:s, rx:Math.random()*0.01-0.005, ry:Math.random()*0.01-0.005, rz:0, float:true, baseY:py, floatSpeed:Math.random()*0.5+0.3, floatAmp:Math.random()*0.3+0.1 });
     }
-
-    const ringGeo = new THREE.TorusGeometry(3.5, 0.08, 8, 60);
-    const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xC8102E, transparent: true, opacity: 0.08 }));
-    ring.position.set(0, -6, -5); ring.rotation.x = Math.PI / 3;
-    scene.add(ring); meshes.push({ mesh: ring, rx: 0.002, ry: 0.006, rz: 0 });
-
-    let mouse = { x: 0, y: 0 };
-    const handleMouse = e => { mouse.x = (e.clientX / window.innerWidth - 0.5) * 2; mouse.y = -(e.clientY / window.innerHeight - 0.5) * 2; };
-    window.addEventListener("mousemove", handleMouse);
-    const handleResize = () => { renderer.setSize(window.innerWidth, window.innerHeight); camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); };
-    window.addEventListener("resize", handleResize);
-
-    let frame = 0, rafId;
+    let mouse={x:0,y:0};
+    const onMouse  = e => { mouse.x=(e.clientX/window.innerWidth-0.5)*2; mouse.y=-(e.clientY/window.innerHeight-0.5)*2; };
+    const onResize = () => { renderer.setSize(window.innerWidth,window.innerHeight); camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); };
+    window.addEventListener("mousemove", onMouse);
+    window.addEventListener("resize", onResize);
+    let frame=0, rafId;
     const animate = () => {
-      rafId = requestAnimationFrame(animate);
-      frame += 0.01;
-      camera.position.x += (mouse.x * 1.5 - camera.position.x) * 0.03;
-      camera.position.y += (mouse.y * 1.0 - camera.position.y) * 0.03;
-      camera.lookAt(0, 0, 0);
-      meshes.forEach(({ mesh, rx, ry, rz, float, baseY, floatSpeed, floatAmp }) => {
-        mesh.rotation.x += rx; mesh.rotation.y += ry;
-        if (rz) mesh.rotation.z += rz;
-        if (float) mesh.position.y = baseY + Math.sin(frame * floatSpeed) * floatAmp;
+      rafId=requestAnimationFrame(animate); frame+=0.01;
+      camera.position.x+=(mouse.x*1.5-camera.position.x)*0.03;
+      camera.position.y+=(mouse.y*1.0-camera.position.y)*0.03;
+      camera.lookAt(0,0,0);
+      meshes.forEach(({mesh,rx=0,ry=0,rz=0,float,baseY,floatSpeed,floatAmp})=>{
+        mesh.rotation.x+=rx; mesh.rotation.y+=ry;
+        if(rz) mesh.rotation.z+=rz;
+        if(float) mesh.position.y=baseY+Math.sin(frame*floatSpeed)*floatAmp;
       });
-      renderer.render(scene, camera);
+      renderer.render(scene,camera);
     };
     animate();
-    return () => { cancelAnimationFrame(rafId); window.removeEventListener("mousemove", handleMouse); window.removeEventListener("resize", handleResize); renderer.dispose(); };
+    return () => { cancelAnimationFrame(rafId); window.removeEventListener("mousemove",onMouse); window.removeEventListener("resize",onResize); renderer.dispose(); };
   }, []);
   return <canvas ref={canvasRef} id="three-canvas" />;
 }
 
-
 function Countdown() {
-  const [t, setT] = useState({ d: 3, h: 14, m: 27, s: 44 });
+  const [t, setT] = useState({ d:3, h:14, m:27, s:44 });
   useEffect(() => {
     const id = setInterval(() => setT(p => {
       let { d, h, m, s } = p;
@@ -370,9 +361,9 @@ function FAQItem({q,a}) {
 const TICKER=[{t:"Riverside Dental saved",h:"$14,200/mo"},{t:"LogiTrack cut missed pickups by",h:"91%"},{t:"Verde Salon recovered",h:"38 hrs/week"},{t:"Apex Realty cut admin by",h:"60%"},{t:"BluePeak Fitness automated",h:"100% invoicing"},{t:"ClearPath closed deals",h:"3× faster"}];
 const PAINS=[
   {icon:<Icon.calendar/>,title:"Missed Appointments & No-Shows",desc:"Manual follow-ups, forgotten reminders, revenue lost to empty slots.",cost:"Avg. $8,400/mo lost"},
-  {icon:<Icon.invoice/>,title:"Manual Invoicing & Collections",desc:"Chasing payments, re-entering data, errors in billing cycles.",cost:"Avg. 14 hrs/week wasted"},
-  {icon:<Icon.box/>,title:"Inventory & Supply Chain Chaos",desc:"Stockouts, overorders, zero real-time visibility across locations.",cost:"Avg. $6,000/mo in waste"},
-  {icon:<Icon.chat/>,title:"Scattered Customer Communication",desc:"Messages across email, WhatsApp, calls — nothing tracked centrally.",cost:"Avg. 40% leads lost"},
+  {icon:<Icon.invoice/>, title:"Manual Invoicing & Collections", desc:"Chasing payments, re-entering data, errors in billing cycles.",cost:"Avg. 14 hrs/week wasted"},
+  {icon:<Icon.box/>,     title:"Inventory & Supply Chain Chaos", desc:"Stockouts, overorders, zero real-time visibility across locations.",cost:"Avg. $6,000/mo in waste"},
+  {icon:<Icon.chat/>,    title:"Scattered Customer Communication",desc:"Messages across email, WhatsApp, calls — nothing tracked centrally.",cost:"Avg. 40% leads lost"},
 ];
 const TESTIMONIALS=[
   {q:"We submitted our pain about missed deliveries. Within weeks they validated demand and we were beta testing the exact tool we needed.",name:"Damien O.",role:"Founder, LogiTrack",init:"DO"},
@@ -390,24 +381,19 @@ const INDUSTRIES=["Dental / Medical Practice","Plumbing","HVAC","Real Estate","S
 const PAIN_OPTIONS=["No-shows & missed appointments","Manual invoicing & chasing payments","Inventory & supply chain issues","Scattered customer communications","Staff scheduling & time tracking","Reporting & business insights","Lead follow-up & sales pipeline","Other (describe below)"];
 
 export default function BPKLanding() {
-  const [form,setForm] = useState({industry:"",biz:"",email:"",painType:"",pain:"",intent:""});
+  const [form,setForm]         = useState({industry:"",biz:"",email:"",painType:"",pain:"",intent:""});
   const [submitted,setSubmitted] = useState(false);
-  const [loading,setLoading] = useState(false);
-  const [error,setError] = useState("");
+  const [loading,setLoading]   = useState(false);
+  const [error,setError]       = useState("");
   const scrollTo = id => document.getElementById(id)?.scrollIntoView({behavior:"smooth"});
   const tickerDouble = [...TICKER,...TICKER];
 
   const handleSubmit = async () => {
-    if(!form.industry||!form.biz||!form.email) { setError("Please fill in industry, business name, and email."); return; }
+    if (!form.industry||!form.biz||!form.email) { setError("Please fill in industry, business name, and email."); return; }
     setLoading(true); setError("");
-    // Try Supabase — if it fails due to network/sandbox, still show success
-    // so the user experience is never broken
     try {
       await saveToSupabase({ industry:form.industry, business_name:form.biz, email:form.email, pain_category:form.painType, pain_description:form.pain, payment_intent:form.intent, status:"Pending" });
-    } catch(e) {
-      // Silently log — don't block the user. On real deployment this will succeed.
-      console.warn("Supabase submit note:", e.message);
-    }
+    } catch(e) { console.warn("Supabase note:", e.message); }
     setLoading(false);
     setSubmitted(true);
   };
@@ -420,7 +406,10 @@ export default function BPKLanding() {
         <nav className="nav">
           <div className="logo-wrap">
             <img src={LOGO_B64} alt="BusinessPainKiller" className="logo-img" />
-            <div><div className="logo-text">Business<span>PainKiller</span></div><div className="logo-tagline">Turn pain into profit</div></div>
+            <div>
+              <div className="logo-text">Business<span>PainKiller</span></div>
+              <div className="logo-tagline">Turn pain into profit</div>
+            </div>
           </div>
           <ul className="nav-links">
             <li><a href="#how"><Icon.gear /> How It Works</a></li>
@@ -471,7 +460,11 @@ export default function BPKLanding() {
           </div>
         </section>
 
-        <div className="ticker-section"><div className="ticker-track">{tickerDouble.map((item,i)=><div key={i} className="ticker-item"><span className="ticker-sep">◆</span>{item.t} <span className="hi">{item.h}</span></div>)}</div></div>
+        <div className="ticker-section">
+          <div className="ticker-track">
+            {tickerDouble.map((item,i)=><div key={i} className="ticker-item"><span className="ticker-sep">◆</span>{item.t} <span className="hi">{item.h}</span></div>)}
+          </div>
+        </div>
 
         <section id="how" className="section">
           <div className="eyebrow"><Icon.gear/> The Process</div>
@@ -480,11 +473,7 @@ export default function BPKLanding() {
             <p className="section-sub">No guesswork. No wasted builds. Real demand validated before a single line of code is written.</p>
           </div>
           <div className="steps-row">
-            {[
-              {num:"01",icon:<Icon.mic/>,title:"Share Your Pain",desc:"Fill in a 1-minute form detailing the operational problem costing your business the most time or money. Free to join."},
-              {num:"02",icon:<Icon.search/>,title:"We Validate Demand",desc:"Our team analyses patterns across hundreds of responses. If your pain is widespread, it gets greenlit for development."},
-              {num:"03",icon:<Icon.build/>,title:"We Build The Fix",desc:"Founding members get beta access before anyone else and lock in at our exclusive founding rate before public launch."},
-            ].map(({num,icon,title,desc})=>(
+            {[{num:"01",icon:<Icon.mic/>,title:"Share Your Pain",desc:"Fill in a 1-minute form detailing the operational problem costing your business the most time or money. Free to join."},{num:"02",icon:<Icon.search/>,title:"We Validate Demand",desc:"Our team analyses patterns across hundreds of responses. If your pain is widespread, it gets greenlit for development."},{num:"03",icon:<Icon.build/>,title:"We Build The Fix",desc:"Founding members get beta access before anyone else and lock in at our exclusive founding rate before public launch."}].map(({num,icon,title,desc})=>(
               <div key={num} className="step"><div className="step-num">{num}</div><div className="step-icon">{icon}</div><div className="step-title">{title}</div><div className="step-desc">{desc}</div></div>
             ))}
           </div>
@@ -584,8 +573,7 @@ export default function BPKLanding() {
                   <div><label className="flabel"><Icon.search/> Biggest Pain Category</label><select className="fselect" value={form.painType} onChange={e=>setForm({...form,painType:e.target.value})}><option value="" disabled>Select your main pain…</option>{PAIN_OPTIONS.map(opt=><option key={opt} value={opt}>{opt}</option>)}</select></div>
                   <div><label className="flabel"><Icon.build/> Tell Us More</label><textarea className="ftextarea" rows={4} placeholder="How often does it happen? What does it cost you? What have you tried?" value={form.pain} onChange={e=>setForm({...form,pain:e.target.value})}/></div>
                   {error && <div className="error-msg">{error}</div>}
-                  <div>
-                    <label className="flabel"><Icon.tag/> If we build this, would you pay for it?</label>
+                  <div><label className="flabel"><Icon.tag/> If we build this, would you pay for it?</label>
                     <select className="fselect" value={form.intent} onChange={e=>setForm({...form,intent:e.target.value})}>
                       <option value="" disabled>Select your answer…</option>
                       <option value="Yes, definitely">✅ Yes, definitely</option>
@@ -594,7 +582,7 @@ export default function BPKLanding() {
                       <option value="No">❌ No</option>
                     </select>
                   </div>
-                  <button className="submit-btn" onClick={handleSubmit} disabled={loading}>{loading ? "Submitting…" : <><Icon.rocket/> Submit & Join Waitlist</>}</button>
+                  <button className="submit-btn" onClick={handleSubmit} disabled={loading}>{loading?"Submitting…":<><Icon.rocket/> Submit & Join Waitlist</>}</button>
                   <div className="form-note"><Icon.lock/> Free to join · No payment required</div>
                 </div>
               )}
@@ -603,8 +591,10 @@ export default function BPKLanding() {
         </div>
 
         <footer className="footer">
-          <div className="footer-copy">© 2026 <span>BusinessPainKiller</span> — Turn business pain into profitable software.</div>
-          <div className="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
+          <div className="footer-bottom">
+            <div className="footer-copy">© 2026 <span>BusinessPainKiller</span> — Turn business pain into profitable software.</div>
+            <div className="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="mailto:businesspainskiller@gmail.com">businesspainskiller@gmail.com</a></div>
+          </div>
         </footer>
       </div>
     </>
