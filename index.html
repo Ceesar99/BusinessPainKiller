@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BusinessPainKiller</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&display=block" />
+    <!-- Preload the logo so browser fetches it before rendering anything -->
+    <link rel="preload" href="/logo-splash.png" as="image" />
+    <style>
+      *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+      #bpk-loader {
+        position: fixed;
+        inset: 0;
+        background: #000000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        z-index: 99999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      #bpk-loader.ready { opacity: 1; }
+
+      #bpk-loader.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .logo {
+        width: 180px;
+        height: auto;
+        display: block;
+        animation: breathe 2.8s ease-in-out infinite;
+      }
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1); }
+        50%       { transform: scale(1.07); }
+      }
+
+      .brand-name {
+        font-family: Manrope, sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: -0.3px;
+        white-space: nowrap;
+      }
+      .brand-name span { color: #C8102E; }
+
+      .tagline {
+        font-family: Manrope, sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.45);
+        white-space: nowrap;
+        margin-top: -16px;
+      }
+      .tagline span { color: #C8102E; }
+    </style>
+  </head>
+  <body>
+
+    <div id="bpk-loader">
+      <img id="splash-logo" class="logo" src="/logo-splash.png" alt="BPK" />
+      <p class="brand-name">Business<span>PainKiller</span></p>
+      <p class="tagline">Turn <span>Pain</span> Into Profit</p>
+    </div>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+
+    <script>
+      (function () {
+        var loader = document.getElementById('bpk-loader');
+        var img    = document.getElementById('splash-logo');
+        var root   = document.getElementById('root');
+
+        function show() {
+          loader.classList.add('ready');
+        }
+
+        function dismiss() {
+          setTimeout(function () {
+            loader.classList.add('hide');
+            setTimeout(function () {
+              if (loader && loader.parentNode) {
+                loader.parentNode.removeChild(loader);
+              }
+            }, 400);
+          }, 2500);
+        }
+
+        // Show only after image fully loaded
+        img.addEventListener('load', show);
+        if (img.complete) show();
+
+        var observer = new MutationObserver(function () {
+          if (root.children.length > 0) {
+            observer.disconnect();
+            dismiss();
+          }
+        });
+        observer.observe(root, { childList: true });
+
+        setTimeout(function () {
+          observer.disconnect();
+          dismiss();
+        }, 6000);
+      })();
+    </script>
+
+  </body>
+</html>
