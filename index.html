@@ -10,11 +10,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&display=block" />
-    <!-- Preload the logo so browser fetches it before rendering anything -->
     <link rel="preload" href="/logo-splash.png" as="image" />
     <style>
       *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+      /* Black screen shows INSTANTLY - no delay ever */
       #bpk-loader {
         position: fixed;
         inset: 0;
@@ -25,15 +25,27 @@
         justify-content: center;
         gap: 24px;
         z-index: 99999;
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        opacity: 1;
+        transition: opacity 1s ease;
       }
-
-      #bpk-loader.ready { opacity: 1; }
 
       #bpk-loader.hide {
         opacity: 0;
         pointer-events: none;
+      }
+
+      /* Content inside starts invisible, fades in once image is ready */
+      .loader-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .loader-content.ready {
+        opacity: 1;
       }
 
       .logo {
@@ -41,6 +53,11 @@
         height: auto;
         display: block;
         animation: breathe 2.8s ease-in-out infinite;
+        animation-play-state: paused;
+      }
+
+      .loader-content.ready .logo {
+        animation-play-state: running;
       }
 
       @keyframes breathe {
@@ -64,7 +81,7 @@
         font-weight: 600;
         letter-spacing: 4px;
         text-transform: uppercase;
-        color: rgba(255,255,255,0.45);
+        color: rgba(255, 255, 255, 0.65);
         white-space: nowrap;
         margin-top: -16px;
       }
@@ -74,9 +91,11 @@
   <body>
 
     <div id="bpk-loader">
-      <img id="splash-logo" class="logo" src="/logo-splash.png" alt="BPK" />
-      <p class="brand-name">Business<span>PainKiller</span></p>
-      <p class="tagline">Turn <span>Pain</span> Into Profit</p>
+      <div class="loader-content" id="loader-content">
+        <img id="splash-logo" class="logo" src="/logo-splash.png" alt="BPK" />
+        <p class="brand-name">Business<span>PainKiller</span></p>
+        <p class="tagline">Turn <span>Pain</span> Into Profit</p>
+      </div>
     </div>
 
     <div id="root"></div>
@@ -84,12 +103,13 @@
 
     <script>
       (function () {
-        var loader = document.getElementById('bpk-loader');
-        var img    = document.getElementById('splash-logo');
-        var root   = document.getElementById('root');
+        var loader  = document.getElementById('bpk-loader');
+        var content = document.getElementById('loader-content');
+        var img     = document.getElementById('splash-logo');
+        var root    = document.getElementById('root');
 
-        function show() {
-          loader.classList.add('ready');
+        function showContent() {
+          content.classList.add('ready');
         }
 
         function dismiss() {
@@ -99,13 +119,15 @@
               if (loader && loader.parentNode) {
                 loader.parentNode.removeChild(loader);
               }
-            }, 400);
+            }, 1100);
           }, 2500);
         }
 
-        // Show only after image fully loaded
-        img.addEventListener('load', show);
-        if (img.complete) show();
+        if (img.complete && img.naturalWidth > 0) {
+          showContent();
+        } else {
+          img.addEventListener('load', showContent);
+        }
 
         var observer = new MutationObserver(function () {
           if (root.children.length > 0) {
