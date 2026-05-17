@@ -14,16 +14,10 @@
     <style>
       *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-      /* Black screen shows INSTANTLY - no delay ever */
       #bpk-loader {
         position: fixed;
-        inset: 0;
+        top: 0; left: 0; right: 0; bottom: 0;
         background: #000000;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 24px;
         z-index: 99999;
         opacity: 1;
         transition: opacity 1s ease;
@@ -34,14 +28,19 @@
         pointer-events: none;
       }
 
-      /* Content inside starts invisible, fades in once image is ready */
+      /* Absolutely centered — never moves regardless of content or font load */
       .loader-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 24px;
+        gap: 20px;
         opacity: 0;
         transition: opacity 0.4s ease;
+        width: max-content;
       }
 
       .loader-content.ready {
@@ -73,7 +72,7 @@
         letter-spacing: -0.3px;
         white-space: nowrap;
       }
-      .brand-name span { color: #C8102E; }
+      .brand-name span { color: #FF1A3C; }
 
       .tagline {
         font-family: Manrope, sans-serif;
@@ -81,11 +80,14 @@
         font-weight: 600;
         letter-spacing: 4px;
         text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.65);
+        color: rgba(255, 255, 255, 0.75);
         white-space: nowrap;
-        margin-top: -16px;
+        margin-top: -12px;
       }
-      .tagline span { color: #C8102E; }
+      .tagline span {
+        color: #FF1A3C;
+        font-weight: 800;
+      }
     </style>
   </head>
   <body>
