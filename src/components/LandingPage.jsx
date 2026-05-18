@@ -26,27 +26,19 @@ const STYLES = `
 }
 html { scroll-behavior: smooth; }
 body { background: var(--white); color: var(--black); font-family: var(--manrope); overflow-x: hidden; -webkit-overflow-scrolling: touch; }
-
-/* FIX: canvas behind everything, page content always on top */
 #three-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-
-/* FIX: NO isolation:isolate — that breaks z-index stacking in Chrome/Safari */
-/* Instead give every section explicit z-index:1 and position:relative */
 #bpk-root { position: relative; z-index: 1; }
-
 .nav { position: sticky; top: 0; z-index: 200; background: #0A0A0A; border-bottom: 1px solid rgba(200,16,46,0.25); padding: 0 48px; height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .logo-wrap { display: flex; align-items: center; gap: 12px; flex-shrink: 0; min-width: 0; }
 .logo-img { height: 46px; width: auto; object-fit: contain; display: block; flex-shrink: 0; }
 .logo-text { font-family: var(--manrope); font-weight: 900; font-size: 17px; color: #fff; letter-spacing: -0.3px; line-height: 1.2; white-space: nowrap; }
 .logo-text span { color: var(--red); }
-.logo-tagline { font-size: 9px; color: rgba(255,255,255,0.4); font-weight: 500; letter-spacing: 0.5px; }
+.logo-tagline { font-size: 9px; color: rgba(255,255,255,0.75); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
 .nav-links { display: flex; gap: 26px; list-style: none; flex-shrink: 0; }
 .nav-links a { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
 .nav-links a:hover { color: var(--red); }
 .nav-cta { background: var(--red); color: #fff; border: none; padding: 7px 13px; border-radius: 7px; font-family: var(--manrope); font-weight: 800; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 5px; }
 .nav-cta:hover { background: var(--red-dark); }
-
-/* FIX: hero must be visible immediately — explicit z-index, no transform tricks */
 .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 80px 60px; max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
 .hero-left { padding-right: 40px; }
 .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 100px; background: rgba(200,16,46,0.08); border: 1px solid rgba(200,16,46,0.2); font-size: 11px; font-weight: 800; color: var(--red); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 32px; }
@@ -127,7 +119,7 @@ body { background: var(--white); color: var(--black); font-family: var(--manrope
 .pricing-left .eyebrow { color:rgba(200,16,46,0.9); }
 .pricing-title { font-family:var(--bebas);font-size:clamp(50px,6vw,90px);letter-spacing:2px;color:#fff;line-height:0.9;margin-bottom:20px; }
 .pricing-title .red { color:var(--red); }
-.pricing-desc { font-size:16px;color:rgba(255,255,255,0.55);line-height:1.75;margin-bottom:32px; }
+.pricing-desc { font-size:16px;color:rgba(255,255,255,0.75);line-height:1.75;margin-bottom:32px; }
 .pricing-card { background:#fff;border-radius:22px;padding:44px;position:relative;overflow:hidden; }
 .pricing-card::before { content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--red),#FF3B5C); }
 .price-was-row { display:flex;align-items:center;gap:10px;margin-bottom:6px; }
@@ -149,7 +141,7 @@ body { background: var(--white); color: var(--black); font-family: var(--manrope
 .countdown { display:flex;gap:10px; }
 .cbox { background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;text-align:center;min-width:60px; }
 .cnum { font-family:var(--bebas);font-size:34px;color:var(--red);line-height:1; }
-.clabel { font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-top:2px; }
+.clabel { font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-top:2px; }
 .guarantee { font-size:11px;color:var(--gray-text);text-align:center;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:5px; }
 .testi-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px; }
 .testi { background:#fff;border:1px solid rgba(0,0,0,0.08);border-radius:18px;padding:28px;transition:all 0.3s; }
@@ -202,10 +194,10 @@ body { background: var(--white); color: var(--black); font-family: var(--manrope
 .error-msg { background:rgba(200,16,46,0.08);border:1px solid rgba(200,16,46,0.25);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red);font-weight:600;margin-top:8px; }
 .footer { background:var(--black);padding:28px 60px;position:relative;z-index:1;border-top:1px solid rgba(200,16,46,0.2); }
 .footer-bottom { display:flex;align-items:center;justify-content:space-between; }
-.footer-copy { font-size:12px;color:rgba(255,255,255,0.35); }
+.footer-copy { font-size:12px;color:rgba(255,255,255,0.65); }
 .footer-copy span { color:var(--red); }
 .footer-links { display:flex;gap:22px; }
-.footer-links a { font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s; }
+.footer-links a { font-size:12px;color:rgba(255,255,255,0.65);text-decoration:none;transition:color 0.2s; }
 .footer-links a:hover { color:#fff; }
 @media (max-width:900px) {
   .nav { padding:0 16px; gap:8px; } .nav-links { display:none; }
@@ -338,7 +330,7 @@ function Countdown() {
   const pad = n => String(n).padStart(2,"0");
   return (
     <div className="countdown-wrap">
-      <p style={{fontFamily:"var(--manrope)",fontSize:10,fontWeight:800,letterSpacing:2,color:"rgba(255,255,255,0.35)",textTransform:"uppercase",marginBottom:10}}>Early Bird Ends In</p>
+      <p style={{fontFamily:"var(--manrope)",fontSize:10,fontWeight:800,letterSpacing:2,color:"rgba(255,255,255,0.65)",textTransform:"uppercase",marginBottom:10}}>Early Bird Ends In</p>
       <div className="countdown">
         {[["d",t.d,"Days"],["h",t.h,"Hrs"],["m",t.m,"Min"],["s",t.s,"Sec"]].map(([k,v,l]) => (
           <div key={k} className="cbox"><div className="cnum">{pad(v)}</div><div className="clabel">{l}</div></div>
@@ -593,7 +585,12 @@ export default function BPKLanding() {
         <footer className="footer">
           <div className="footer-bottom">
             <div className="footer-copy">© 2026 <span>BusinessPainKiller</span> — Turn business pain into profitable software.</div>
-            <div className="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="mailto:businesspainskiller@gmail.com">businesspainskiller@gmail.com</a></div>
+            <div className="footer-links">
+              <a href="#">Privacy</a>
+              <a href="#">Terms</a>
+              <a href="mailto:businesspainkiller@outlook.com">businesspainkiller@outlook.com</a>
+              <a href="mailto:businesspainskiller@gmail.com">businesspainskiller@gmail.com</a>
+            </div>
           </div>
         </footer>
       </div>
