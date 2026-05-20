@@ -586,8 +586,8 @@ export default function BPKLanding() {
           <div className="footer-bottom">
             <div className="footer-copy">© 2026 <span>BusinessPainKiller</span> — Turn business pain into profitable software.</div>
             <div className="footer-links">
-              <a href="#">Privacy</a>
-              <a href="#">Terms</a>
+             <a href="/src/components/privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy</a>
+              <a href="/src/components/terms-of-service.html" target="_blank" rel="noopener noreferrer">Terms</a>
               <a href="mailto:businesspainkiller@outlook.com">businesspainkiller@outlook.com</a>
               <a href="mailto:businesspainskiller@gmail.com">businesspainskiller@gmail.com</a>
             </div>
