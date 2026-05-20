@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Privacy Policy — BuzinessPainKiller</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#C8102E;--black:#0A0A0A;--white:#FFFFFF;--off-white:#F7F6F4;
+  --gray-light:#F0EFED;--gray-text:#555555;--gray-mid:#BDBDBD;
+  --bebas:"Bebas Neue",sans-serif;--manrope:"Manrope",sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--white);color:var(--black);font-family:var(--manrope);overflow-x:hidden;-webkit-overflow-scrolling:touch}
+
+/* NAV */
+.nav{background:#0A0A0A;border-bottom:1px solid rgba(200,16,46,0.25);padding:0 48px;height:72px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-text{font-family:var(--manrope);font-weight:900;font-size:17px;color:#fff;letter-spacing:-0.3px;line-height:1.2;white-space:nowrap}
+.logo-text span{color:var(--red)}
+.logo-tagline{font-size:9px;color:rgba(255,255,255,0.75);font-weight:600;letter-spacing:3px;text-transform:uppercase}
+.nav-back{background:var(--red);color:#fff;border:none;padding:8px 18px;border-radius:7px;font-family:var(--manrope);font-weight:800;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:background 0.2s}
+.nav-back:hover{background:#9B0B22}
+
+/* HERO BAND */
+.hero-band{background:var(--off-white);border-bottom:1px solid rgba(0,0,0,0.08);padding:56px 60px 40px}
+.doc-eyebrow{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+.doc-title{font-family:var(--bebas);font-size:clamp(52px,6vw,84px);letter-spacing:2px;color:var(--black);line-height:0.9;margin-bottom:16px}
+.doc-meta{font-size:13px;color:var(--gray-text);font-weight:500;display:flex;gap:24px;flex-wrap:wrap}
+.doc-meta span{display:flex;align-items:center;gap:6px}
+.doc-meta strong{color:var(--black)}
+
+/* CONTENT */
+.doc-body{max-width:860px;margin:0 auto;padding:56px 60px 96px}
+.section-block{margin-bottom:44px}
+.section-block h2{font-family:var(--bebas);font-size:26px;letter-spacing:1px;color:var(--black);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid rgba(200,16,46,0.15)}
+.section-block h3{font-size:15px;font-weight:800;color:var(--black);margin:20px 0 8px}
+.section-block p{font-size:14px;color:var(--gray-text);line-height:1.8;margin-bottom:12px}
+.section-block ul{padding-left:20px;margin-bottom:12px}
+.section-block ul li{font-size:14px;color:var(--gray-text);line-height:1.8;margin-bottom:6px;list-style:disc}
+.highlight-box{background:rgba(200,16,46,0.05);border:1px solid rgba(200,16,46,0.18);border-radius:10px;padding:18px 20px;margin-bottom:20px}
+.highlight-box p{margin-bottom:0;color:var(--black);font-weight:500}
+.highlight-box strong{color:var(--red)}
+
+/* DATA TABLE */
+.data-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px}
+.data-table th{background:var(--black);color:#fff;padding:12px 14px;text-align:left;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+.data-table td{padding:12px 14px;border-bottom:1px solid rgba(0,0,0,0.08);color:var(--gray-text);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--off-white)}
+.data-table td strong{color:var(--black);font-weight:700}
+
+/* RIGHTS GRID */
+.rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.right-card{background:var(--off-white);border:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:18px}
+.right-card h4{font-size:13px;font-weight:800;color:var(--black);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.right-card p{font-size:12px;color:var(--gray-text);line-height:1.6;margin:0}
+.right-icon{width:20px;height:20px;background:rgba(200,16,46,0.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+
+/* FOOTER */
+.doc-footer{background:var(--black);padding:24px 60px;border-top:1px solid rgba(200,16,46,0.2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.doc-footer p{font-size:12px;color:rgba(255,255,255,0.55)}
+.doc-footer p span{color:var(--red)}
+.doc-footer-links{display:flex;gap:20px}
+.doc-footer-links a{font-size:12px;color:rgba(255,255,255,0.55);text-decoration:none;transition:color 0.2s}
+.doc-footer-links a:hover{color:#fff}
+
+@media(max-width:700px){
+  .nav{padding:0 16px}
+  .hero-band{padding:36px 20px 28px}
+  .doc-body{padding:36px 20px 64px}
+  .doc-footer{padding:18px 20px;flex-direction:column;text-align:center}
+  .doc-meta{flex-direction:column;gap:8px}
+  .rights-grid{grid-template-columns:1fr}
+  .data-table{display:block;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo-wrap">
+    <div>
+      <div class="logo-text">Buziness<span>PainKiller</span></div>
+      <div class="logo-tagline">Turn Pain Into Profit</div>
+    </div>
+  </div>
+  <a href="/" class="nav-back">← Back to Home</a>
+</nav>
+
+<!-- HERO BAND -->
+<div class="hero-band">
+  <div class="doc-eyebrow">Legal</div>
+  <h1 class="doc-title">Privacy<br/>Policy</h1>
+  <div class="doc-meta">
+    <span><strong>Effective Date:</strong> 20 May 2026</span>
+    <span><strong>Last Updated:</strong> 20 May 2026</span>
+    <span><strong>Governing Law:</strong> England &amp; Wales (UK GDPR)</span>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="doc-body">
+
+  <div class="highlight-box">
+    <p><strong>Your privacy matters to us.</strong> This Privacy Policy explains what personal data we collect when you visit our website or join our waitlist, why we collect it, how we use it, and your rights regarding your data. We are committed to handling your information responsibly and in accordance with the <strong>UK General Data Protection Regulation (UK GDPR)</strong> and the <strong>Data Protection Act 2018</strong>.</p>
+  </div>
+
+  <!-- 1 -->
+  <div class="section-block">
+    <h2>1. Who We Are</h2>
+    <p><strong>BuzinessPainKiller</strong> is the data controller responsible for your personal information. We operate the website at <strong>buzinesspainsskiller.netlify.app</strong> and collect waitlist submissions from business owners interested in our upcoming software solutions.</p>
+    <p><strong>Contact details:</strong></p>
+    <ul>
+      <li>Email: buzinesspainkiller@outlook.com</li>
+      <li>Email: businesspainskiller@gmail.com</li>
+      <li>Website: buzinesspainsskiller.netlify.app</li>
+    </ul>
+    <p>If you have any privacy-related questions or concerns, please contact us using the details above.</p>
+  </div>
+
+  <!-- 2 -->
+  <div class="section-block">
+    <h2>2. What Data We Collect</h2>
+    <p>We collect the following personal and business data when you submit our waitlist form:</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Data Field</th>
+          <th>Type</th>
+          <th>Why We Collect It</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Business Email Address</strong></td>
+          <td>Personal Data</td>
+          <td>To contact you about your submission, validation results, and early access invitations.</td>
+        </tr>
+        <tr>
+          <td><strong>Business Name</strong></td>
+          <td>Business Data</td>
+          <td>To understand which businesses are experiencing which pain points.</td>
+        </tr>
+        <tr>
+          <td><strong>Industry</strong></td>
+          <td>Business Data</td>
+          <td>To segment and validate pain points across industries.</td>
+        </tr>
+        <tr>
+          <td><strong>Pain Category</strong></td>
+          <td>Business Data</td>
+          <td>To identify the most common and costly operational problems.</td>
+        </tr>
+        <tr>
+          <td><strong>Pain Description</strong></td>
+          <td>User-Submitted Content</td>
+          <td>To understand the depth and impact of your specific problem.</td>
+        </tr>
+        <tr>
+          <td><strong>Payment Intent Response</strong></td>
+          <td>Business Data</td>
+          <td>To gauge commercial demand and prioritise which products to build.</td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Data We Do NOT Collect</h3>
+    <p>We do <strong>not</strong> collect:</p>
+    <ul>
+      <li>Payment card details or financial information (no payment is taken at sign-up).</li>
+      <li>Government-issued identification numbers.</li>
+      <li>Sensitive personal data (e.g. health, ethnicity, political opinions).</li>
+      <li>Data from children under the age of 18.</li>
+    </ul>
+  </div>
+
+  <!-- 3 -->
+  <div class="section-block">
+    <h2>3. How We Collect Data</h2>
+    <p>We collect data through the following means:</p>
+    <ul>
+      <li><strong>Waitlist form submissions</strong> — when you fill in and submit the form on our website.</li>
+      <li><strong>Email communications</strong> — when you reply to or interact with our emails.</li>
+      <li><strong>Cookies and analytics</strong> — we may use basic analytics tools to understand how visitors use our site (see Section 8 on Cookies).</li>
+    </ul>
+  </div>
+
+  <!-- 4 -->
+  <div class="section-block">
+    <h2>4. Legal Basis for Processing</h2>
+    <p>Under the UK GDPR, we rely on the following lawful bases for processing your personal data:</p>
+    <ul>
+      <li><strong>Consent</strong> — by submitting the waitlist form, you consent to us contacting you about your submission and relevant product updates. You may withdraw this consent at any time.</li>
+      <li><strong>Legitimate Interests</strong> — we have a legitimate business interest in analysing aggregated pain point data to determine which software products to build. This processing does not override your rights or freedoms.</li>
+      <li><strong>Contract</strong> — if you enter into a pre-order or purchase agreement with us in the future, we will process your data as necessary to fulfil that contract.</li>
+    </ul>
+  </div>
+
+  <!-- 5 -->
+  <div class="section-block">
+    <h2>5. How We Use Your Data</h2>
+    <p>We use the data you provide for the following purposes:</p>
+    <ul>
+      <li>To acknowledge your waitlist submission and keep you informed of your status.</li>
+      <li>To validate demand by analysing patterns across submissions (in aggregated, anonymised form where possible).</li>
+      <li>To send you an early bird pre-order invitation if your pain point is validated.</li>
+      <li>To communicate product updates, launch announcements, and founding member information.</li>
+      <li>To improve our website and submission process.</li>
+    </ul>
+    <p>We will <strong>never</strong>:</p>
+    <ul>
+      <li>Sell your personal data to third parties.</li>
+      <li>Use your data for unrelated marketing by third parties.</li>
+      <li>Share your individually identifiable submission data publicly.</li>
+    </ul>
+  </div>
+
+  <!-- 6 -->
+  <div class="section-block">
+    <h2>6. Data Storage & Security</h2>
+    <h3>Where Your Data Is Stored</h3>
+    <p>Your waitlist submission data is stored in <strong>Supabase</strong>, a third-party database provider. Supabase stores data in secure, encrypted cloud infrastructure. Data may be stored in servers located within the European Economic Area (EEA) or in other regions with appropriate data transfer safeguards.</p>
+
+    <h3>Security Measures</h3>
+    <p>We take reasonable technical and organisational measures to protect your data, including:</p>
+    <ul>
+      <li>HTTPS encryption for all data transmitted to and from our website.</li>
+      <li>Restricted access to your submission data — only authorised team members can view it.</li>
+      <li>Use of reputable, security-certified third-party infrastructure.</li>
+    </ul>
+    <p>However, no method of transmission over the internet is 100% secure. While we strive to protect your data, we cannot guarantee absolute security.</p>
+
+    <h3>Data Retention</h3>
+    <p>We will retain your personal data for as long as necessary to fulfil the purposes described in this policy, or until you request deletion. If you do not become a paying customer within 24 months of submitting the waitlist form, we will review and, where appropriate, delete your data.</p>
+  </div>
+
+  <!-- 7 -->
+  <div class="section-block">
+    <h2>7. Your Rights Under UK GDPR</h2>
+    <p>As a data subject under UK GDPR, you have the following rights:</p>
+    <div class="rights-grid">
+      <div class="right-card">
+        <h4><span class="right-icon">👁</span> Right to Access</h4>
+        <p>You can request a copy of the personal data we hold about you.</p>
+      </div>
+      <div class="right-card">
+        <h4><span class="right-icon">✏️</span> Right to Rectification</h4>
+        <p>You can ask us to correct any inaccurate or incomplete data.</p>
+      </div>
+      <div class="right-card">
+        <h4><span class="right-icon">🗑</span> Right to Erasure</h4>
+        <p>You can request deletion of your personal data ("right to be forgotten").</p>
+      </div>
+      <div class="right-card">
+        <h4><span class="right-icon">⏸</span> Right to Restriction</h4>
+        <p>You can ask us to restrict how we process your data in certain circumstances.</p>
+      </div>
+      <div class="right-card">
+        <h4><span class="right-icon">📦</span> Right to Portability</h4>
+        <p>You can request your data in a structured, machine-readable format.</p>
+      </div>
+      <div class="right-card">
+        <h4><span class="right-icon">🚫</span> Right to Object</h4>
+        <p>You can object to processing based on legitimate interests at any time.</p>
+      </div>
+    </div>
+    <p>To exercise any of these rights, contact us at <strong>buzinesspainkiller@outlook.com</strong>. We will respond within <strong>30 days</strong> of receiving your request.</p>
+    <p>You also have the right to lodge a complaint with the <strong>Information Commissioner's Office (ICO)</strong> at <a href="https://ico.org.uk" target="_blank" style="color:var(--red)">ico.org.uk</a> if you believe we have not handled your data appropriately.</p>
+  </div>
+
+  <!-- 8 -->
+  <div class="section-block">
+    <h2>8. Cookies</h2>
+    <p>Our website may use cookies and similar tracking technologies to:</p>
+    <ul>
+      <li>Understand how visitors navigate our site (analytics).</li>
+      <li>Remember your preferences.</li>
+      <li>Ensure our site functions correctly.</li>
+    </ul>
+    <h3>Types of Cookies We May Use</h3>
+    <ul>
+      <li><strong>Essential cookies</strong> — necessary for the site to function. Cannot be disabled.</li>
+      <li><strong>Analytics cookies</strong> — help us understand visitor behaviour (e.g. page views, traffic sources). These are only used with your consent.</li>
+    </ul>
+    <p>You can control cookie settings through your browser. Disabling certain cookies may affect the functionality of our website. We do not currently use advertising or tracking cookies for third-party marketing.</p>
+  </div>
+
+  <!-- 9 -->
+  <div class="section-block">
+    <h2>9. Third-Party Processors</h2>
+    <p>We share your data with the following third-party service providers who process it on our behalf:</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Provider</th>
+          <th>Purpose</th>
+          <th>Data Shared</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Supabase</strong></td>
+          <td>Database / backend storage</td>
+          <td>All waitlist submission fields</td>
+        </tr>
+        <tr>
+          <td><strong>Netlify</strong></td>
+          <td>Website hosting</td>
+          <td>IP address, browser/device data (standard web logs)</td>
+        </tr>
+        <tr>
+          <td><strong>Google Fonts</strong></td>
+          <td>Font delivery</td>
+          <td>IP address (standard CDN request)</td>
+        </tr>
+        <tr>
+          <td><strong>Microsoft / Outlook</strong></td>
+          <td>Email communications</td>
+          <td>Email address, communication content</td>
+        </tr>
+        <tr>
+          <td><strong>Google / Gmail</strong></td>
+          <td>Email communications</td>
+          <td>Email address, communication content</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Each of these providers operates under their own privacy policies and data processing agreements. We only share the minimum data necessary for each provider to perform their service.</p>
+  </div>
+
+  <!-- 10 -->
+  <div class="section-block">
+    <h2>10. International Data Transfers</h2>
+    <p>Some of our third-party processors may store or process your data outside the United Kingdom or European Economic Area (EEA). Where such transfers occur, we ensure appropriate safeguards are in place, such as:</p>
+    <ul>
+      <li>Standard Contractual Clauses (SCCs) approved by the relevant authorities.</li>
+      <li>Transfers to countries with an adequacy decision by the UK Secretary of State.</li>
+    </ul>
+  </div>
+
+  <!-- 11 -->
+  <div class="section-block">
+    <h2>11. Children's Privacy</h2>
+    <p>Our services are not directed at individuals under the age of 18. We do not knowingly collect personal data from children. If you believe we have inadvertently collected data from a minor, please contact us immediately and we will delete it.</p>
+  </div>
+
+  <!-- 12 -->
+  <div class="section-block">
+    <h2>12. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time to reflect changes in our practices or applicable law. When we make changes, we will update the "Last Updated" date at the top of this page.</p>
+    <p>We encourage you to review this policy periodically. For significant changes, we may notify waitlist members by email.</p>
+  </div>
+
+  <!-- 13 -->
+  <div class="section-block">
+    <h2>13. Contact Us</h2>
+    <p>If you have any questions, concerns, or requests relating to this Privacy Policy or the data we hold about you, please contact us:</p>
+    <ul>
+      <li><strong>Email:</strong> buzinesspainkiller@outlook.com</li>
+      <li><strong>Email:</strong> businesspainskiller@gmail.com</li>
+      <li><strong>Website:</strong> buzinesspainsskiller.netlify.app</li>
+    </ul>
+    <p>We aim to respond to all data-related enquiries within <strong>30 days</strong>.</p>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <p>© 2026 <span>BuzinessPainKiller</span> — Turn business pain into profitable software.</p>
+  <div class="doc-footer-links">
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/terms">Terms of Service</a>
+    <a href="mailto:buzinesspainkiller@outlook.com">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
